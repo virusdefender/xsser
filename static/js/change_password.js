@@ -15,7 +15,7 @@ function change_password(){
                 var response = JSON.parse(data);
                 if(response.status == "success"){
                     messenger.post({
-                        message: "Success   ",
+                        message: "Success",
                         type: "success"
                     })
                     window.location.href=response.redirect

@@ -43,16 +43,16 @@ def register(request):
             return message("error", u"Two passwords do not match")
 
         if len(password) < 6:
-            return message("error", "Password too short")
+            return message("error", u"Password too short")
 
         User.objects.create_user(username=username, password=password, email=email)
-        next = request.POST.get("next", "/")
+        next = request.POST.get("next", "/my_projects/")
         response_json = {"status": "success", "redirect": next}
         return HttpResponse(json.dumps(response_json))
 
     else:
-        next = request.GET.get("next", "/")
-        return render(request, "Account/register_form.html", {"next": next})
+        next = request.GET.get("next", "/my_projects/")
+        return render(request, "account/register_form.html", {"next": next})
 
 
 def login(request):
@@ -73,7 +73,7 @@ def login(request):
             return HttpResponse(json.dumps(response_json))
     else:
         next = request.GET.get("next", "/my_projects/")
-        return render(request, "Account/login_form.html", {"next": next})
+        return render(request, "account/login_form.html", {"next": next})
 
 
 def logout(request):
@@ -87,13 +87,16 @@ def change_password(request):
         old_password = request.POST.get("old_password")
         password1 = request.POST.get("password1")
         password2 = request.POST.get("password2")
+
         if password1 == password2:
+            if len(password1) < 6:
+                return message("error", "Password too short")
             if auth.authenticate(username=request.user.username, password=old_password):
                 user = User.objects.get(username=request.user.username)
                 user.set_password(password1)
                 user.save()
                 auth.logout(request)
-                response_json = {"status": "success", "redirect": "/account/login/"}
+                response_json = {"status": "success", "redirect": "/login/"}
                 return HttpResponse(json.dumps(response_json))
             else:
                 response_json = {"status": "error", "content": u"Old password do not match"}
@@ -102,4 +105,4 @@ def change_password(request):
             response_json = {"status": "error", "content": u"Two passwords do not match"}
             return HttpResponse(json.dumps(response_json))
     else:
-        return render(request, "Account/change_password.html")
+        return render(request, "account/change_password.html")

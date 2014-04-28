@@ -48,7 +48,7 @@
 </div>
 <script>
     function delete_project(){
-  if(confirm("确定删除此内容?")){
+  if(confirm("Are you sure to delete this project?")){
     $.get('/project/delete/' ,
     {"token": "{{ token }}", "id": "{{ project.id }}"}, function(re){
       window.location.href="/my_projects/";
