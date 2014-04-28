@@ -14,11 +14,16 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
-
+    url(r'^$', 'core.views.my_projects', name="index"),
     url(r'^create_project/$', 'core.views.create_project', name="create_project"),
     url(r'^project/$', 'core.views.project_detail', name="project_detail"),
+    url(r'^project/delete', 'core.views.delete_project', name="delete_project"),
     url(r'^xss/$', 'core.views.xss_js', name="xss_js"),
     url(r'^get_cookie/$', 'core.views.get_cookie', name="get_cookie"),
     url(r'^my_projects/$', 'core.views.my_projects', name="my_projects"),
+
+    url('^login/$', 'account.views.login', name="login"),
+    url(r'^register/$', 'account.views.register', name="register"),
+    url(r'^change_password/$', 'account.views.change_password', name="change_password"),
 
 )

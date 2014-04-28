@@ -8,7 +8,9 @@
         <div class="project_description">
             <h3>{{ project.title }}</h3>
 
-            <p>Create time:{{ project.create_time|date:"Y-m-d H:i:s" }}</p>
+            <p>Create time:{{ project.create_time|date:"Y-m-d H:i:s" }}&nbsp;&nbsp;&nbsp;&nbsp;
+                <span class="glyphicon glyphicon-trash"></span>
+                <a href="javascript:void(0)" onclick="delete_project()">Delete this project</a></p>
             <hr/>
             <div class="instruction">
                 <p>How to use?</p>
@@ -44,4 +46,14 @@
         </div>
     </div>
 </div>
+<script>
+    function delete_project(){
+  if(confirm("确定删除此内容?")){
+    $.get('/project/delete/' ,
+    {"token": "{{ token }}", "id": "{{ project.id }}"}, function(re){
+      window.location.href="/my_projects/";
+    });
+  }
+}
+</script>
 {% endblock %}

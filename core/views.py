@@ -2,7 +2,7 @@
 import json
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, Http404, HttpResponseRedirect
+from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render, redirect
 from xsser.settings import BASE_URL
 from .models import XssProject, Record
@@ -29,7 +29,11 @@ def project_detail(request):
         p = XssProject.objects.get(pk=int(project_id), user=request.user)
     except XssProject.DoesNotExist:
         raise Http404
-    return render(request, "core/project_detail.html", {"project": p, "base_url": BASE_URL})
+    if "csrftoken" in request.COOKIES:
+        token = request.COOKIES["csrftoken"]
+    else:
+        token = ""
+    return render(request, "core/project_detail.html", {"project": p, "base_url": BASE_URL, "token": token})
 
 
 def get_cookie(request):
@@ -70,3 +74,21 @@ def xss_js(request):
 def my_projects(request):
     p = XssProject.objects.filter(user=request.user)
     return render(request, "core/my_project.html", {"projects": p})
+
+
+@login_required(login_url="/login")
+def delete_project(request):
+    project_id = request.GET.get("id", "-1")
+    token = request.GET.get("token", " ")
+
+    if "csrftoken" in request.COOKIES:
+        if token == request.COOKIES["csrftoken"]:
+            try:
+                p = XssProject.objects.get(user=request.user, pk=int(project_id))
+                p.delete()
+                return HttpResponse("success")
+            except XssProject.DoesNotExist:
+                raise Http404
+    return HttpResponseForbidden("Invalid Token")
+
+
