@@ -21,6 +21,7 @@ class XssProject(models.Model):
     title = models.CharField(max_length=30)
     records = models.ManyToManyField(Record, blank=True, null=True)
     create_time = models.DateField(auto_now_add=True)
+    #js_url = models.URLField()
 
     def __unicode__(self):
         return "%s" % self.title

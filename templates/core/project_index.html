@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}project{% endblock %}
+
+{% block body %}
+{% include "_nav_bar.html" %}
+<div class="container">
+    <div class="project">
+        <div class="project_description">
+            <h3>{{ project.title }}</h3>
+
+            <p>Create time;{{ project.create_time }}</p>
+
+            <p>JS url:{{ base_url }}xss/{{ project.id }}/</p>
+        </div>
+        <div class="project_records">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    {% for record in project.records.all %}
+                    <div class="record">
+                        <p>Create time:{{ record.create_time }}</p>
+                        <p>Cookie:{{ record.cookie }}</p>
+                        <p>User agent:{{ record.user_agent }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -6,14 +6,15 @@
 <div class="container">
     <div class="create_project_form">
         <form action="{% url 'create_project' %}" method="post">
+            {% csrf_token %}
             <div>
                 <label>Title</label>
             </div>
             <div class="col-xs-4">
-                <input type="text" class="form-control" placeholder="Project title" name="title">
+                <input type="text" class="form-control" placeholder="Project title" maxlength="25" name="title">
             </div>
 
-            <button type="submit" class="btn btn-primary">Create project</button>
+            <button type="submit" class="btn btn-primary" onclick="this.form.submit()" >Create project</button>
         </form>
     </div>
 </div>
