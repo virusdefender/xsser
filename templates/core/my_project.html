@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}My projects{% endblock %}
+
+{% block body %}
+{% include "_nav_bar.html" %}
+<div class="container">
+    <div class="my_project">
+        <h3>My projects</h3>
+        <div class="panel-body">
+            {% for project in projects reversed %}
+            <div class="project">
+                <p>Title:<a href="/project/?id={{ project.id }}">{{ project.title }}</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                Create_time:{{ project.create_time|date:"Y-m-d H:i:s" }}&nbsp;&nbsp;&nbsp;&nbsp;
+                Cookie number:{{ project.record.all|length }}</p>
+                <hr/>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
