@@ -1,3 +1,4 @@
+#coding=utf-8
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -7,8 +8,9 @@ class Record(models.Model):
     cookie = models.TextField(blank=True)
     user_agent = models.CharField(max_length=50, blank=True)
     ip = models.IPAddressField(blank=True)
-    url = models.URLField(balnk=True)
+    url = models.URLField(blank=True)
     title = models.CharField(max_length=50, blank=True)
+    keep_session = models.BooleanField(default=False)
 
     def __unicode__(self):
         return "%s %s" % (self.create_time, self.url)
@@ -17,8 +19,7 @@ class Record(models.Model):
 class XssProject(models.Model):
     user = models.ForeignKey(User)
     title = models.CharField(max_length=30)
-    description = models.TextField(blank=True)
-    records = models.ManyToManyField(Record, balnk=True, null=True)
+    records = models.ManyToManyField(Record, blank=True, null=True)
     create_time = models.DateField(auto_now_add=True)
 
     def __unicode__(self):

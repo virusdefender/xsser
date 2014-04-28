@@ -1,0 +1,39 @@
+<!-- Static navbar -->
+<div class="navbar navbar-default navbar-static-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <a class="navbar-brand" href="/"><span style="font-size:130%;color:black;">django forum</span></a>
+        </div>
+        <div class="navbar-collapse collapse">
+            
+            <ul class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user.username }}
+                        <span class="glyphicon glyphicon-comment" id="message_icon" style="display:none;"></span>
+                        <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/message/">消息<span class="badge" id="message_badge" style="display:none;">新</span></a></li>
+                        <li><a href="/user/{{ user.username }}/">我的帖子</a></li>
+                        <li><a href="/account/user_profile/">控制面板</a></li>
+                        <li class="divider"></li>
+                        <li><a href="/account/logout">退出</a></li>
+                    </ul>
+                </li>
+                {% else %}
+                <li class="active"><a href="/login/"><span class="glyphicon glyphicon-user"></span>&nbsp;登录</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+        <!--/.nav-collapse -->
+    </div>
+</div>
+

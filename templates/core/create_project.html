@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}create project{% endblock %}
+
+{% block body %}
+{% include "_nav_bar.html" %}
+<div class="container">
+    <div class="create_project_form">
+        <form action="{% url 'create_project' %}" method="post">
+            <div>
+                <label>Title</label>
+            </div>
+            <div class="col-xs-4">
+                <input type="text" class="form-control" placeholder="Project title" name="title">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create project</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

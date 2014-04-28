@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset='utf-8'>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ STATIC_URL }}favicon.ico"/>
+    <title>
+        {% block title %}xsser{% endblock %}
+    </title>
+
+    <!--<link rel='stylesheet' href='{{ STATIC_URL }}css/bootstrap.min.css'/>-->
+    <link href="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+    <!--<link rel='stylesheet' href='{{ STATIC_URL }}css/justified-nav.css'/>-->
+
+    <!--<script src='{{ STATIC_URL }}js/jquery.js'></script>-->
+    <script src="http://cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+    <!--<script src='{{ STATIC_URL }}js/bootstrap.min.js'></script>-->
+    <script src="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+    {% block cssblock %}
+    {% endblock %}
+
+    <script type="text/javascript">
+    if (top.location !== self.location) {
+        top.location=self.location;
+     }
+    </script>
+    {% block javascriptblock %}
+    {% endblock %}
+</head>
+<body>
+
+{% block body %}
+{% endblock %}
+
+<div class="container" id="footer">
+   <hr>
+<p class="text-center"><small>Copyright © 2014 Rights Reserved </small>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="http://sae.sina.com.cn" target="_blank">
+    <img src="http://static.sae.sina.com.cn/image/poweredby/120X33_transparent.gif" title="Powered by Sina App Engine"></a></p>
+</div>
+
+</body>
+</html>
