@@ -6,15 +6,21 @@
 <div class="container">
     <div class="my_project">
         <h3>My projects</h3>
+        <span class="glyphicon glyphicon-cog"><a href="/create_project/">Create project</a></span>
+        <hr/>
         <div class="panel-body">
-            {% for project in projects reversed %}
-            <div class="project">
-                <p>Title:<a href="/project/?id={{ project.id }}">{{ project.title }}</a>&nbsp;&nbsp;&nbsp;&nbsp;
-                Create_time:{{ project.create_time|date:"Y-m-d H:i:s" }}&nbsp;&nbsp;&nbsp;&nbsp;
-                Cookie number:{{ project.record.all|length }}</p>
-                <hr/>
-            </div>
-            {% endfor %}
+            {% if not projects %}
+                <p>No projects, you can <a href="/create_project/">create a project.</a></p>
+            {% else %}
+                {% for project in projects reversed %}
+                    <div class="project">
+                        <p>Title:<a href="/project/?id={{ project.id }}">{{ project.title }}</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                        Create_time:{{ project.create_time|date:"Y-m-d H:i:s" }}&nbsp;&nbsp;&nbsp;&nbsp;
+                        Cookie number:{{ project.record.all|length }}</p>
+                        <hr/>
+                    </div>
+                {% endfor %}
+            {% endif %}
         </div>
     </div>
 </div>

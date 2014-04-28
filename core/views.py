@@ -2,7 +2,7 @@
 import json
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from xsser.settings import BASE_URL
 from .models import XssProject, Record
@@ -19,7 +19,7 @@ def create_project(request):
         if len(title) > 25:
             title = title[:25]
         p = XssProject.objects.create(user=request.user, title=title)
-        return render(request, "core/project_index.html", {"project": p})
+        return HttpResponseRedirect("/project?id=%s" % p.id)
 
 
 @login_required(login_url="/login/")
@@ -29,7 +29,7 @@ def project_detail(request):
         p = XssProject.objects.get(pk=int(project_id), user=request.user)
     except XssProject.DoesNotExist:
         raise Http404
-    return render(request, "core/project_index.html", {"project": p, "base_url": BASE_URL})
+    return render(request, "core/project_detail.html", {"project": p, "base_url": BASE_URL})
 
 
 def get_cookie(request):
