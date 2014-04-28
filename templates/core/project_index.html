@@ -7,19 +7,20 @@
     <div class="project">
         <div class="project_description">
             <h3>{{ project.title }}</h3>
-
-            <p>Create time;{{ project.create_time }}</p>
-
-            <p>JS url:{{ base_url }}xss/{{ project.id }}/</p>
+            <p>Create time:{{ project.create_time|date:"Y-m-d H:i:s" }}</p>
+            <p>JS url:<code>{{ base_url }}xss/{{ project.id }}/</code></p>
         </div>
         <div class="project_records">
             <div class="panel panel-default">
                 <div class="panel-body">
                     {% for record in project.records.all %}
                     <div class="record">
-                        <p>Create time:{{ record.create_time }}</p>
-                        <p>Cookie:{{ record.cookie }}</p>
+                        <p>Record id:<span class="badge">{{ record.id }}</span></p>
+                        <p>Create time:{{ record.create_time|date:"Y-m-d H:i:s" }}</p>
+                        <p>Url:<code>{{ record.title }}</code></p>
+                        Cookie:<pre>{{ record.cookie }}</pre>
                         <p>User agent:{{ record.user_agent }}</p>
+                        <p>ip:<code>{{ record.ip }}</code></p>
                     </div>
                     {% endfor %}
                 </div>

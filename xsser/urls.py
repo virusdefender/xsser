@@ -17,6 +17,7 @@ urlpatterns = patterns('',
 
     url(r'^create_project/$', 'core.views.create_project', name="create_project"),
     url(r'project/$', 'core.views.project_index', name="project_index"),
-
+    url(r'^xss/$', 'core.views.xss_js', name="xss_js"),
+    url(r'^get_cookie/$', 'core.views.get_cookie', name="get_cookie"),
 
 )
