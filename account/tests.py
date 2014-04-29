@@ -66,6 +66,13 @@ class UserRegisterTest(TestCase):
                                                           "password1": "111111"})
         self.assertEqual(json.loads(response.content)["status"], "error")
 
+    def test_register_with_empty_psw(self):
+        response = self.client.post(reverse("register"), {"username": "test1",
+                                                          "email": "test@qq.com",
+                                                          "password": "",
+                                                          "password1": ""})
+        self.assertEqual(json.loads(response.content)["status"], "error")
+
 
 class UserLoginTest(TestCase):
     def setUp(self):
@@ -105,7 +112,7 @@ class UserChangePwdTest(TestCase):
         response = self.client.post(reverse("change_password"), {"old_password": "111111",
                                                                  "password1": "123456",
                                                                  "password2": "123456"})
-        self.assertRedirects(response, reverse("login") + '?next=/account/change_password/')
+        self.assertRedirects(response, reverse("login") + '?next=/change_password/')
 
     def test_change_pwd_with_error_old_pwd(self):
         self.client.login(username="testuser", password="111111")
@@ -120,6 +127,14 @@ class UserChangePwdTest(TestCase):
                                                                  "password1": "123456",
                                                                  "password2": "123453"})
         self.assertEqual(json.loads(response.content)["status"], "error")
+
+    def test_change_psw_with_empty_new_psw(self):
+    	self.client.login(username="testuser", password="111111")
+        response = self.client.post(reverse("change_password"), {"old_password": "111111",
+                                                                 "password1": "",
+                                                                 "password2": ""})
+        self.assertEqual(json.loads(response.content)["status"], "error")
+
 
 
 class ShowUserPostTest(TestCase):

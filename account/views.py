@@ -81,7 +81,7 @@ def logout(request):
     return redirect("index")
 
 
-@login_required(login_url="/account/login/")
+@login_required(login_url="/login/")
 def change_password(request):
     if request.method == "POST":
         old_password = request.POST.get("old_password")
