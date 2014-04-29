@@ -21,11 +21,11 @@ def register(request):
         password1 = request.POST.get('password1', " ").strip()
 
         if not (3 <= len(username) <= 10):
-            return message("error", u"Illegal username length")
+            return message("error", u"Username length is too long or too short")
 
         r = re.compile(r"[A-Za-z0-9\u4e00-\u9fa5]+")
         if not r.match(username):
-            return message("error", u"Illegal username")
+            return message("error", u"Illegal username format")
 
         username_is_exist = User.objects.filter(username=username).exists()
         if username_is_exist:
@@ -43,7 +43,7 @@ def register(request):
             return message("error", u"Two passwords do not match")
 
         if len(password) < 6:
-            return message("error", u"Password too short")
+            return message("error", u"Password is too short")
 
         User.objects.create_user(username=username, password=password, email=email)
         next = request.POST.get("next", "/my_projects/")
@@ -69,7 +69,7 @@ def login(request):
             response_json = {"status": "success", "redirect": next}
             return HttpResponse(json.dumps(response_json))
         else:
-            response_json = {"status": "error", "content": u"Username or password do not match"}
+            response_json = {"status": "error", "content": u"Username or password is incorrect"}
             return HttpResponse(json.dumps(response_json))
     else:
         next = request.GET.get("next", "/my_projects/")
@@ -90,7 +90,7 @@ def change_password(request):
 
         if password1 == password2:
             if len(password1) < 6:
-                return message("error", "Password too short")
+                return message("error", "Password is too short")
             if auth.authenticate(username=request.user.username, password=old_password):
                 user = User.objects.get(username=request.user.username)
                 user.set_password(password1)
@@ -99,7 +99,7 @@ def change_password(request):
                 response_json = {"status": "success", "redirect": "/login/"}
                 return HttpResponse(json.dumps(response_json))
             else:
-                response_json = {"status": "error", "content": u"Old password do not match"}
+                response_json = {"status": "error", "content": u"Old password is incorrect"}
             return HttpResponse(json.dumps(response_json))
         else:
             response_json = {"status": "error", "content": u"Two passwords do not match"}
