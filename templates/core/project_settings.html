@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}create project{% endblock %}
+
+{% block body %}
+{% include "_nav_bar.html" %}
+<div class="container">
+    <h3>Project {{ project.title }} settings</h3><hr/>
+    <div class="project_settings">
+        <form action="/project/settings/{{ project.id }}/" method="post">
+            {% csrf_token %}
+            {% if project.keep_session %}
+                <p><input type="checkbox" checked="checked" value="keep_session" name="settings"> Keep session</p>
+            {% else %}
+                <p><input type="checkbox"  value="keep_session" name="settings"> Keep session</p>
+            {% endif %}
+            {% if project.custom_js %}
+                <p><input type="checkbox" checked="checked"  value="custom_js" name="settings"> Use custom js</p>
+            {% else %}
+                <p><input type="checkbox"  name="settings" value="custom_js"> Use custom js</p>
+            {% endif %}
+            <label>Custom js content</label>
+            <textarea class="form-control" rows="3" name="custom_js_content">{{ project.custom_js_content }}</textarea><br/>
+            <p>The custom js will be appended to the origin js, you can click<a href="/xss?id={{ project.id }}" target="_blank"> here </a>to preview.</a></p>
+            <p><button type="submit" class="btn btn-primary" onclick="this.form.submit()" >Submit</button></p>
+        </form>
+
+    </div>
+</div>
+{% endblock %}
