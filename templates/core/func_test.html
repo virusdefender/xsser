@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Xss test page{% endblock %}
+
+{% block body %}
+<br><br>
+<div class="container">
+    <div class="func_test_form">
+        <label>This is a dom xss, input your xss url here</label>
+        <input type="text" class="form-control" id="xss_code"><br/>
+        <p><button type="submit" class="btn btn-primary" onclick="append_code()" >Submit</button></p>
+    </div>
+    <div id="xss_area"></div>
+    <div id="info"></div>
+    <script>
+    function append_code(){
+        $("#info").append("Now you can go back to you projects to see results")
+        $("#xss_area").append($("#xss_code").val())}
+    </script>
+</div>
+{% endblock %}

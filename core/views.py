@@ -3,7 +3,7 @@ import json
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpResponseForbidden
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, render_to_response
 from xsser.settings import BASE_URL
 from .models import XssProject, Record
 
@@ -15,7 +15,7 @@ def create_project(request):
     else:
         title = request.POST.get("title")
         if not title:
-            return render(request, "info.html", {"info": "请填写标题"})
+            return HttpResponse("Please input title")
         if len(title) > 25:
             title = title[:25]
         p = XssProject.objects.create(user=request.user, title=title)
@@ -121,6 +121,12 @@ def project_settings(request, project_id):
 
         p.save()
         return HttpResponseRedirect("/project/settings/%s/" % p.id)
+
+
+def func_test(request):
+    response = render_to_response("core/func_test.html", {})
+    response.set_cookie("test_cookie", "this is a test cookie")
+    return response
 
 
 

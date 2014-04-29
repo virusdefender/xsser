@@ -4,6 +4,7 @@
 {% block body %}
 {% include "_nav_bar.html" %}
 <div class="container">
+    <h3>Project {{ project.title }} settings</h3><hr/>
     <div class="project_settings">
         <form action="/project/settings/{{ project.id }}/" method="post">
             {% csrf_token %}
