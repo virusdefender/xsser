@@ -10,7 +10,9 @@
 
             <p>Create time:{{ project.create_time|date:"Y-m-d H:i:s" }}&nbsp;&nbsp;&nbsp;&nbsp;
                 <span class="glyphicon glyphicon-trash"></span>
-                <a href="javascript:void(0)" onclick="delete_project()">Delete this project</a></p>
+                <a href="javascript:void(0)" onclick="delete_project()">Delete this project</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                <span class="glyphicon glyphicon-asterisk"></span><a href="/project/settings/{{ project.id }}">Settings</a>
+            </p>
             <hr/>
             <div class="instruction">
                 <p>How to use?</p>
@@ -27,7 +29,7 @@
                     {% else %}
                         {% for record in project.records.all reversed %}
                             <div class="record">
-                                <p>Record id:<span class="badge">{{ record.id }}</span></p>
+                                <p>Record id:<span class="badge">{{ forloop.counter }}</span></p>
 
                                 <p>Create time:{{ record.create_time|date:"Y-m-d H:i:s" }}</p>
                                 <p>Title:<code>{{ record.title }}</code></p>

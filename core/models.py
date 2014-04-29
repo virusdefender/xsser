@@ -10,7 +10,6 @@ class Record(models.Model):
     ip = models.IPAddressField(blank=True)
     url = models.URLField(blank=True)
     title = models.CharField(max_length=50, blank=True)
-    keep_session = models.BooleanField(default=False)
 
     def __unicode__(self):
         return "%s %s" % (self.create_time, self.url)
@@ -21,7 +20,9 @@ class XssProject(models.Model):
     title = models.CharField(max_length=30)
     records = models.ManyToManyField(Record, blank=True, null=True)
     create_time = models.DateTimeField(auto_now_add=True)
-    #js_url = models.URLField()
+    keep_session = models.BooleanField(default=False)
+    custom_js = models.BooleanField(default=False)
+    custom_js_content = models.TextField(blank=True)
 
     def __unicode__(self):
         return "%s" % self.title
