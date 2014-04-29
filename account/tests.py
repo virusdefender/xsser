@@ -134,20 +134,3 @@ class UserChangePwdTest(TestCase):
                                                                  "password1": "",
                                                                  "password2": ""})
         self.assertEqual(json.loads(response.content)["status"], "error")
-
-
-
-class ShowUserPostTest(TestCase):
-    def setUp(self):
-        self.user = User(username="testuser")
-        self.user.set_password("111111")
-        self.user.save()
-        self.client = Client()
-
-    def test_username_doesnot_exist(self):
-        response = self.client.get("/user/testtest/")
-        self.assertEqual(response.status_code, 404)
-
-    def test_error_page_num(self):
-        response = self.client.get("/user/testuser/page/10/")
-        self.assertEqual(response.status_code, 404)
