@@ -129,5 +129,8 @@ def func_test(request):
     return response
 
 
+def keep_session(request):
+    pass
+
 
 

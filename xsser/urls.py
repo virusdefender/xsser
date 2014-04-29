@@ -23,6 +23,7 @@ urlpatterns = patterns('',
     url(r'^my_projects/$', 'core.views.my_projects', name="my_projects"),
     url(r'^project/settings/(?P<project_id>\d+)/$', 'core.views.project_settings', name="project_settings"),
     url(r'^project/test/', 'core.views.func_test', name="func_test"),
+    url(r'^project/keep_session/$', 'core.views.keep_session', name="keep_session"),
 
     url('^login/$', 'account.views.login', name="login"),
     url(r'^register/$', 'account.views.register', name="register"),
