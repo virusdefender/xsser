@@ -21,11 +21,11 @@ def register(request):
         password1 = request.POST.get('password1', " ").strip()
 
         if not (3 <= len(username) <= 10):
-            return message("error", u"Username length is too long or too short")
+            return message("error", u"Invalid username length")
 
         r = re.compile(r"[A-Za-z0-9\u4e00-\u9fa5]+")
         if not r.match(username):
-            return message("error", u"Illegal username format")
+            return message("error", u"Invalid username format")
 
         username_is_exist = User.objects.filter(username=username).exists()
         if username_is_exist:
@@ -33,7 +33,7 @@ def register(request):
 
         r = re.compile(r"[^@]+@[^@]+\.[^@]+")
         if not r.match(email):
-            return message("error", u"Illegal email format")
+            return message("error", u"Invalid email format")
 
         email_is_exist = User.objects.filter(email=email).exists()
         if email_is_exist:
@@ -57,8 +57,8 @@ def register(request):
 
 def login(request):
     if request.method == "POST":
-        username = request.POST.get("username", "-1")
-        password = request.POST.get("password", "-1")
+        username = request.POST.get("username")
+        password = request.POST.get("password")
         user = auth.authenticate(username=username, password=password)
         if user is not None and user.is_active:
             auth.logout(request)
@@ -69,7 +69,7 @@ def login(request):
             response_json = {"status": "success", "redirect": next}
             return HttpResponse(json.dumps(response_json))
         else:
-            response_json = {"status": "error", "content": u"Username or password is incorrect"}
+            response_json = {"status": "error", "content": u"Invalid Username or password"}
             return HttpResponse(json.dumps(response_json))
     else:
         next = request.GET.get("next", "/my_projects/")
