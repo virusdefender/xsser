@@ -6,13 +6,13 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.contrib import auth
 from django.shortcuts import render, redirect
-
+from .forms import RegisterForm
 
 def message(status, content):
     response_json = {"status": status, "content": content}
     return HttpResponse(json.dumps(response_json))
 
-
+"""
 def register(request):
     if request.method == "POST":
         username = request.POST.get("username", " ").strip()
@@ -53,6 +53,29 @@ def register(request):
     else:
         next = request.GET.get("next", "/my_projects/")
         return render(request, "account/register_form.html", {"next": next})
+
+"""
+
+
+def register(request):
+    if request.method == "POST":
+        register_form = RegisterForm(request.POST)
+        if register_form.is_valid():
+            username = register_form.cleaned_data["username"]
+            email = register_form.cleaned_data["email"]
+            password = register_form.cleaned_data["password"]
+            User.objects.create_user(username=username, password=password, email=email)
+            next = request.POST.get("next", "/my_projects/")
+            response_json = {"status": "success", "redirect": next}
+            return HttpResponse(json.dumps(response_json))
+        else:
+            #print repr(register_form.errors)
+            response_json = {"status": "error", "content": register_form.errors.items()[0][1][0]}
+            return HttpResponse(json.dumps(response_json))
+    else:
+        next = request.GET.get("next", "/my_projects/")
+        return render(request, "account/register_form.html", {"next": next})
+
 
 
 def login(request):
