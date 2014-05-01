@@ -112,10 +112,10 @@ def logout(request):
 def change_password(request):
     if request.method == "POST":
         change_psw_form = ChangePswForm(request.POST)
-        username = change_psw_form.cleaned_data["username"]
-        old_password = change_psw_form.cleaned_data["old_password"]
-        password = change_psw_form.cleaned_data["password1"]
         if change_psw_form.is_valid():
+            username = change_psw_form.cleaned_data["username"]
+            old_password = change_psw_form.cleaned_data["old_password"]
+            password = change_psw_form.cleaned_data["new_password"]
             if auth.authenticate(username=username, password=old_password):
                 user = User.objects.get(username=request.user.username)
                 user.set_password(password)
@@ -127,7 +127,7 @@ def change_password(request):
                 response_json = {"status": "error", "content": u"Old password is incorrect"}
             return HttpResponse(json.dumps(response_json))
         else:
-            response_json = {"status": "error", "content":change_psw_form.errors.items()[0][1][0]}
+            response_json = {"status": "error", "content": change_psw_form.errors.items()[0][1][0]}
             return HttpResponse(json.dumps(response_json))
     else:
         return render(request, "account/change_password.html")

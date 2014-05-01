@@ -15,6 +15,7 @@ class UserRegisterTest(TestCase):
                                                           "email": "test@qq.com",
                                                           "password": "111111",
                                                           "confirm_password": "111111"})
+        print json.loads(response.content)
         self.assertEqual(json.loads(response.content)["status"], "success")
 
     def test_register_with_invalid_username(self):
@@ -91,7 +92,7 @@ class UserLoginTest(TestCase):
                                                        "password": "111111"})
         self.assertEqual(json.loads(response.content)["status"], "error")
 
-'''
+
 class UserChangePwdTest(TestCase):
     def setUp(self):
         self.user = User(username="testuser")
@@ -134,4 +135,3 @@ class UserChangePwdTest(TestCase):
                                                                  "new_password": "",
                                                                  "confirm_new_password": ""})
         self.assertEqual(json.loads(response.content)["status"], "error")
-'''
