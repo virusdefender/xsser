@@ -6,13 +6,14 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.contrib import auth
 from django.shortcuts import render, redirect
-from .forms import RegisterForm
+from .forms import RegisterForm, LoginForm, ChangePswForm
 
+"""
 def message(status, content):
     response_json = {"status": status, "content": content}
     return HttpResponse(json.dumps(response_json))
 
-"""
+
 def register(request):
     if request.method == "POST":
         username = request.POST.get("username", " ").strip()
@@ -69,7 +70,6 @@ def register(request):
             response_json = {"status": "success", "redirect": next}
             return HttpResponse(json.dumps(response_json))
         else:
-            #print repr(register_form.errors)
             response_json = {"status": "error", "content": register_form.errors.items()[0][1][0]}
             return HttpResponse(json.dumps(response_json))
     else:
@@ -77,22 +77,26 @@ def register(request):
         return render(request, "account/register_form.html", {"next": next})
 
 
-
 def login(request):
     if request.method == "POST":
-        username = request.POST.get("username")
-        password = request.POST.get("password")
-        user = auth.authenticate(username=username, password=password)
-        if user is not None and user.is_active:
-            auth.logout(request)
-            auth.login(request, user)
-            next = request.POST.get("next", "/my_projects/")
-            #if next == "" or "/register/":
-            #next = "/"
-            response_json = {"status": "success", "redirect": next}
-            return HttpResponse(json.dumps(response_json))
+        login_form = LoginForm(request.POST)
+        if login_form.is_valid():
+            username = login_form.cleaned_data["username"]
+            password = login_form.cleaned_data["password"]
+            user = auth.authenticate(username=username, password=password)
+            if user is not None and user.is_active:
+                auth.logout(request)
+                auth.login(request, user)
+                next = request.POST.get("next", "/my_projects/")
+                #if next == "" or "/register/":
+                #next = "/"
+                response_json = {"status": "success", "redirect": next}
+                return HttpResponse(json.dumps(response_json))
+            else:
+                response_json = {"status": "error", "content": u"Invalid Username or password"}
+                return HttpResponse(json.dumps(response_json))
         else:
-            response_json = {"status": "error", "content": u"Invalid Username or password"}
+            response_json = {"status": "error", "content": login_form.errors.items()[0][1][0]}
             return HttpResponse(json.dumps(response_json))
     else:
         next = request.GET.get("next", "/my_projects/")
@@ -107,16 +111,14 @@ def logout(request):
 @login_required(login_url="/login/")
 def change_password(request):
     if request.method == "POST":
-        old_password = request.POST.get("old_password")
-        password1 = request.POST.get("password1")
-        password2 = request.POST.get("password2")
-
-        if password1 == password2:
-            if len(password1) < 6:
-                return message("error", "Password is too short")
-            if auth.authenticate(username=request.user.username, password=old_password):
+        change_psw_form = ChangePswForm(request.POST)
+        username = change_psw_form.cleaned_data["username"]
+        old_password = change_psw_form.cleaned_data["old_password"]
+        password = change_psw_form.cleaned_data["password1"]
+        if change_psw_form.is_valid():
+            if auth.authenticate(username=username, password=old_password):
                 user = User.objects.get(username=request.user.username)
-                user.set_password(password1)
+                user.set_password(password)
                 user.save()
                 auth.logout(request)
                 response_json = {"status": "success", "redirect": "/login/"}
@@ -125,7 +127,7 @@ def change_password(request):
                 response_json = {"status": "error", "content": u"Old password is incorrect"}
             return HttpResponse(json.dumps(response_json))
         else:
-            response_json = {"status": "error", "content": u"Two passwords do not match"}
+            response_json = {"status": "error", "content":change_psw_form.errors.items()[0][1][0]}
             return HttpResponse(json.dumps(response_json))
     else:
         return render(request, "account/change_password.html")
