@@ -17,6 +17,7 @@ class Record(models.Model):
 
 class XssProject(models.Model):
     user = models.ForeignKey(User)
+    project_id = models.CharField(max_length=20)
     title = models.CharField(max_length=30)
     records = models.ManyToManyField(Record, blank=True, null=True)
     create_time = models.DateTimeField(auto_now_add=True)
