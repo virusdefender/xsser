@@ -51,17 +51,18 @@ def get_cookie(request):
         ip = request.META['REMOTE_ADDR']
     print request.GET.get("p")
     content = json.loads(request.GET.get("p", "{}"))
-    print content
+    #print content
 
     try:
         p = XssProject.objects.get(pk=project_id)
     except XssProject.DoesNotExist:
         raise Http404
-    r = Record.objects.create(browser=content["browser"],
+    r = Record.objects.create(browser=content["browser"]["name"] + " " + content["browser"]["version"],
                               ip=ip,
                               user_agent=content["ua"],
                               language=content["lang"],
                               referer=content["referrer"],
+                              location=content["location"],
                               top_location=content["toplocation"],
                               cookie=content["cookie"],
                               domain=content["domain"],
@@ -141,7 +142,7 @@ def project_settings(request, project_id):
 
 def func_test(request):
     response = render_to_response("core/func_test.html", {})
-    response.set_cookie("test_cookie", "this is a test cookie")
+    response.set_cookie("test_cookie", 1234567)
     return response
 
 

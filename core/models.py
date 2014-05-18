@@ -14,7 +14,7 @@ class Record(models.Model):
     domain = models.CharField(max_length=50, blank=True)
     screen = models.CharField(max_length=30, blank=True)
     flash = models.CharField(max_length=30, blank=True)
-    user_agent = models.CharField(max_length=50, blank=True)
+    user_agent = models.CharField(max_length=150, blank=True)
     ip = models.IPAddressField(blank=True)
     title = models.CharField(max_length=50, blank=True)
 
