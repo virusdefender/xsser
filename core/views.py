@@ -4,6 +4,7 @@ import json
 import urllib2
 import random
 import hashlib
+from django.core.paginator import Paginator
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpResponseForbidden
@@ -31,15 +32,34 @@ def create_project(request):
 @login_required(login_url="/login/")
 def project_detail(request):
     project_id = request.GET.get("id", "-1")
+    page_num = request.GET.get("p", "1")
     try:
-        p = XssProject.objects.get(pk=project_id, user=request.user)
+        project = XssProject.objects.get(pk=project_id, user=request.user)
     except XssProject.DoesNotExist:
         raise Http404
     if "csrftoken" in request.COOKIES:
         token = request.COOKIES["csrftoken"]
     else:
         token = ""
-    return render(request, "core/project_detail.html", {"project": p, "base_url": BASE_URL, "token": token})
+    record_page_info = Paginator(project.records.all(), 35)
+    total_page = record_page_info.num_pages
+    if int(page_num) > total_page:
+        raise Http404
+    have_pre = have_next = True
+    if int(page_num) == 1:
+        have_pre = False
+    if int(page_num) == total_page:
+        have_next = False
+    return render(request, "core/project_detail.html", {"record": record_page_info.page(int(page_num)),
+                                                        "project": project,
+                                                        
+                                                        "base_url": BASE_URL,
+                                                        "token": token,
+                                                        "page_num": page_num,
+                                                        "have_next": have_next,
+                                                        "have_pre": have_pre,
+                                                        "next_page_num": unicode(int(page_num) + 1),
+                                                        "pre_page_num": unicode(int(page_num) - 1), })
 
 
 #TODO:获取ip等信息可能存在绕过
@@ -50,7 +70,10 @@ def get_cookie(request):
     else:
         ip = request.META['REMOTE_ADDR']
     print request.GET.get("p")
-    content = json.loads(request.GET.get("p", "{}"))
+    try:
+        content = json.loads(request.GET.get("p", "{}"))
+    except Exception:
+        return HttpResponse("error")
     #print content
 
     try:
@@ -94,7 +117,7 @@ def my_projects(request):
     return render(request, "core/my_project.html", {"projects": p})
 
 
-@login_required(login_url="/login")
+@login_required(login_url="/login/")
 def delete_project(request):
     project_id = request.GET.get("id", "-1")
     token = request.GET.get("token", " ")
