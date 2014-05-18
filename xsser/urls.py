@@ -21,7 +21,7 @@ urlpatterns = patterns('',
     url(r'^xss/$', 'core.views.xss_js', name="xss_js"),
     url(r'^get_cookie/$', 'core.views.get_cookie', name="get_cookie"),
     url(r'^my_projects/$', 'core.views.my_projects', name="my_projects"),
-    url(r'^project/settings/(?P<project_id>\d+)/$', 'core.views.project_settings', name="project_settings"),
+    url(r'^project/settings/(?P<project_id>\w+)/$', 'core.views.project_settings', name="project_settings"),
     url(r'^project/test/', 'core.views.func_test', name="func_test"),
     url(r'^project/keep_session/$', 'core.views.keep_session', name="keep_session"),
 
