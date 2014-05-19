@@ -19,7 +19,7 @@ class Record(models.Model):
     title = models.CharField(max_length=50, blank=True)
 
     def __unicode__(self):
-        return "%s %s" % (self.create_time, self.url)
+        return "%s" % (self.create_time, )
 
 
 class XssProject(models.Model):

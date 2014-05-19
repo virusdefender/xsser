@@ -28,54 +28,64 @@
         </div>
         <hr/>
         <div class="project_records">
-                    {% if not project.records.all %}
-                    <p>No cookies</p>
-                    {% else %}
-                    <div class="panel-group" id="accordion">
-                        {% for record in project.records.all reversed %}
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-toggle="collapse" data-parent="#accordion"
-                                       href="#{{ record.id }}">
-                                        Record id:<span class="badge">{{ forloop.counter }}</span>
-                                        {{ record.create_time|date:"Y-m-d H:i:s" }} -- {{ record.ip }}
-                                    </a>
-                                </h4>
-                            </div>
-                            <div class="panel-collapse collapse" id="{{ record.id }}">
-                                <div class="panel-body">
-
-                                    <p>Title:<code>{{ record.title }}</code></p>
-
-                                    <p>Cookie:<code>{{ record.cookie }}</code></p>
-
-                                    <p>User agent:<code>{{ record.user_agent }}</code></p>
-
-                                    <p>Location:<code>{{ record.location }}</code></p>
-
-                                    <p>Top Location:<code>{{ record.top_location }}</code></p>
-
-                                    <p>Domain:<code>{{ record.domain }}</code></p>
-
-                                    <p>IP:<code>{{ record.ip }}</code></p>
-
-                                    <p>Referer:<code>{{ record.referer }}</code></p>
-
-                                    <p>Browser:<code>{{ record.browser }}-{{ record.language }} Flash:{{ record.flash }}</code>
-                                    </p>
-
-                                    <p>Screen:<code>{{ record.screen }}</code></p>
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
+            {% if not project.records.all %}
+            <p>No cookies</p>
+            {% else %}
+            <div class="panel-group" id="accordion">
+                {% for record in records %}
+                <div class="panel panel-default" id="record_{{ record.id }}">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-toggle="collapse" data-parent="#accordion"
+                               href="#{{ record.id }}">
+                                Record id:<span class="badge">{{ forloop.counter }}</span>
+                                {{ record.create_time|date:"Y-m-d H:i:s" }} -- {{ record.ip }}
+                            </a>
+                        </h4>
                     </div>
-                    {% endif %}
+                    <div class="panel-collapse collapse" id="{{ record.id }}">
+                        <div class="panel-body">
+
+                            <p>Title:<code>{{ record.title }}</code></p>
+
+                            <p>Cookie:<code>{{ record.cookie }}</code></p>
+
+                            <p>User agent:<code>{{ record.user_agent }}</code></p>
+
+                            <p>Location:<code>{{ record.location }}</code></p>
+
+                            <p>Top Location:<code>{{ record.top_location }}</code></p>
+
+                            <p>Domain:<code>{{ record.domain }}</code></p>
+
+                            <p>IP:<code>{{ record.ip }}</code></p>
+
+                            <p>Referer:<code>{{ record.referer }}</code></p>
+
+                            <p>Browser:<code>{{ record.browser }}-{{ record.language }} Flash:{{ record.flash }}</code>
+                            </p>
+
+                            <p>Screen:<code>{{ record.screen }}</code></p>
+
+                            <p><span class="glyphicon glyphicon-trash"></span>
+                                <a href="javascript:void(0)" onclick="delete_record('{{ record.id }}')">Delete record</a></p>
+                        </div>
+                    </div>
                 </div>
+                {% endfor %}
             </div>
+            {% endif %}
         </div>
     </div>
+
+    <ul class="pager">
+        {% if have_pre %}
+        <li class="previous"><a href="/project/?id={{ project.id }}&p={{ pre_page_num }}">&larr; 上一页</a></li>
+        {% endif %}
+        {% if have_next %}
+        <li class="next"><a href="/project/?id={{ project.id }}&p={{ next_page_num }}">下一页 &rarr;</a></li>
+        {% endif %}
+    </ul>
 </div>
 <script>
     function delete_project(){
@@ -87,6 +97,15 @@
   }
 }
 
-
+</script>
+<script>
+    function delete_record(record_id){
+  if(confirm("Are you sure to delete this record?")){
+    $.get('/record/delete/' ,
+    {"token": "{{ token }}", "project_id": "{{ project.id }}", "record_id": record_id}, function(re){
+      $("#record_" + record_id).remove();;
+    });
+  }
+}
 </script>
 {% endblock %}
