@@ -74,6 +74,7 @@ def get_cookie(request):
         content = json.loads(request.GET.get("p", "{}"))
     except Exception:
         return HttpResponse("error")
+        #print "error"
     #print content
 
     try:

