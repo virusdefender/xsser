@@ -155,17 +155,13 @@ def delete_record(request):
 
 @login_required(login_url="/login/")
 def project_settings(request, project_id):
+    try:
+        p = XssProject.objects.get(pk=project_id, user=request.user)
+    except XssProject.DoesNotExist:
+        raise Http404
     if request.method == "GET":
-        try:
-            p = XssProject.objects.get(pk=project_id)
-        except XssProject.DoesNotExist:
-            raise Http404
         return render(request, "core/project_settings.html", {"project": p})
     else:
-        try:
-            p = XssProject.objects.get(pk=project_id)
-        except XssProject.DoesNotExist:
-            raise Http404
         checkbox_list = request.POST.getlist("settings")
         if "custom_js" in checkbox_list:
             p.custom_js = True
@@ -188,6 +184,7 @@ def func_test(request):
     return response
 
 
+#演示功能  还不能用~
 def keep_session(request):
     p = XssProject.objects.filter(keep_session=True)
     for item in p:
